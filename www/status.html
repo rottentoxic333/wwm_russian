@@ -50,7 +50,7 @@
 
         <!-- Статистика машинного перевода -->
         <section class="border border-gray-200 rounded-lg p-4 bg-white">
-            <h2 class="text-sm font-semibold text-gray-800 mb-3">Машинный перевод (_cn_translate/translation_ru.tsv)</h2>
+            <h2 class="text-sm font-semibold text-gray-800 mb-3">Предворительный перевод</h2>
             <div id="cnStats" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="text-center p-3 bg-gray-50 rounded">
                     <div class="text-2xl font-bold text-gray-900" id="cnTotal">-</div>
@@ -73,28 +73,30 @@
             </div>
         </section>
 
-        <!-- Уникальные строки -->
+        <!-- Дополнительная статистика по машинному RU -->
         <section class="border border-gray-200 rounded-lg p-4 bg-white">
-            <h2 class="text-sm font-semibold text-gray-800 mb-3">Уникальные строки в машинном переводе</h2>
-            <p class="text-xs text-gray-600 mb-3">Строки, которые есть в машинном переводе, но отсутствуют в основном</p>
+            <h2 class="text-sm font-semibold text-gray-800 mb-3">Машинный перевод в русском относительно основного</h2>
+            <p class="text-xs text-gray-600 mb-3">
+                Сравнение количества строк на русском языке в основном переводе и машинном переводе.
+            </p>
             <div id="uniqueStats" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="text-center p-3 bg-green-50 rounded">
                     <div class="text-2xl font-bold text-green-700" id="uniqueTotal">-</div>
-                    <div class="text-xs text-green-600 mt-1">Всего уникальных</div>
+                    <div class="text-xs text-green-600 mt-1">Машинный RU сверх основного</div>
                 </div>
                 <div class="text-center p-3 bg-blue-50 rounded">
                     <div class="text-2xl font-bold text-blue-700" id="uniqueRU">-</div>
-                    <div class="text-xs text-blue-600 mt-1">Русский (RU)</div>
+                    <div class="text-xs text-blue-600 mt-1">Машинный RU (всего)</div>
                     <div class="text-xs text-blue-500 mt-1" id="uniqueRUPercent">-</div>
                 </div>
                 <div class="text-center p-3 bg-yellow-50 rounded">
                     <div class="text-2xl font-bold text-yellow-700" id="uniqueEN">-</div>
-                    <div class="text-xs text-yellow-600 mt-1">Английский (EN)</div>
+                    <div class="text-xs text-yellow-600 mt-1">Основной RU (всего)</div>
                     <div class="text-xs text-yellow-500 mt-1" id="uniqueENPercent">-</div>
                 </div>
                 <div class="text-center p-3 bg-gray-50 rounded">
                     <div class="text-2xl font-bold text-gray-900" id="uniqueEmpty">-</div>
-                    <div class="text-xs text-gray-600 mt-1">Пустые</div>
+                    <div class="text-xs text-gray-600 mt-1">Машинный RU / основной RU</div>
                 </div>
             </div>
         </section>
@@ -258,11 +260,24 @@
             const cnStats = calculateStats(cnRows);
             updateStats('cn', cnStats);
 
-            // Находим уникальные строки (есть в CN, но нет в основном)
-            const mainIds = new Set(mainRows.map(r => r.id));
-            const uniqueRows = cnRows.filter(r => !mainIds.has(r.id));
-            const uniqueStats = calculateStats(uniqueRows);
-            updateStats('unique', uniqueStats);
+            // Дополнительная статистика по машинному RU
+            // Разница по количеству русских строк между машинным и основным переводом
+            const extraRu = Math.max(cnStats.ru - mainStats.ru, 0);
+            // Доля русских строк в машинном переводе
+            const ruShareInCn = cnStats.total > 0 ? ((cnStats.ru / cnStats.total) * 100).toFixed(1) : 0;
+            // Насколько машинный RU больше основного RU (ожидаемо большие проценты)
+            const ruRatio = mainStats.ru > 0 ? ((cnStats.ru / mainStats.ru) * 100).toFixed(1) : 0;
+
+            document.getElementById('uniqueTotal').textContent = extraRu.toLocaleString();
+            document.getElementById('uniqueRU').textContent = cnStats.ru.toLocaleString();
+            document.getElementById('uniqueRUPercent').textContent = `${ruShareInCn}%`;
+            document.getElementById('uniqueEN').textContent = mainStats.ru.toLocaleString();
+            document.getElementById('uniqueENPercent').textContent = `${ruRatio}%`;
+            document.getElementById('uniqueEmpty').textContent = `${ruRatio}%`;
+
+            // Прогресс-бар для блока уникальных — показываем долю RU в машинном переводе
+            document.getElementById('uniqueRUProgress').style.width = `${ruShareInCn}%`;
+            document.getElementById('uniqueRUPercentBar').textContent = `${ruShareInCn}%`;
 
             loadingInfo.textContent = `✅ Данные загружены. Основной: ${mainStats.total.toLocaleString()} строк, Машинный: ${cnStats.total.toLocaleString()} строк, Уникальных: ${uniqueStats.total.toLocaleString()} строк`;
         } catch (e) {
