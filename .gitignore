@@ -1,3 +1,9 @@
-
+_cn_translate/no_english.tsv
+_soft/config.ini
 translate_lm_studio.js
 translation_ru_process.tsv
+log.txt
+log.json
+log.csv
+test.py
+test.js
