@@ -1,5 +1,7 @@
 ## Where Winds Meet – инструменты локализации (GUI)
 
+> Доступна 2 версия `WWM_Extractor_Files_and_Texts_2.py`
+
 **Софт для распаковки/запаковки ресурсов и работы с текстами игры _Where Winds Meet_.**
 
 Основной файл взят с: [zoneofgames](https://forum.zoneofgames.ru/topic/80635-where-winds-meet/)

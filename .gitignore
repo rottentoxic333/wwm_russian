@@ -1,0 +1,41 @@
+# tsv files
+_cn_translate/no_english.tsv
+translation_ru_process.tsv
+
+# config
+_soft/config.ini
+
+# scripts
+translate_lm_studio.js
+test.py
+test.js
+
+# Logs
+log.txt
+log.json
+log.csv
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# tmp
+*.tmp
+*.bak
+*.backup

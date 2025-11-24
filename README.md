@@ -18,7 +18,7 @@
 
 ## 🔗 Ссылки
 
-- [Сравнение файлов локализации](https://dog729.github.io/wwm_russian/www/status.html)
+- [Сравнение файлов локализации](https://dog729.github.io/wwm_russian/www/comparisons.html)
 - [Страница обсуждения перевода на сайте Zone of Games](https://forum.zoneofgames.ru/topic/80635-where-winds-meet/)
 - [Google Таблица со словарём для перевода](https://docs.google.com/spreadsheets/d/1tTemjK3A1iD7sbvxPfZ8tk6xjOGZpGzdsGWl-TAgBtc/edit?usp=sharing)
 - [Руководство Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3609472595)
