@@ -9,6 +9,8 @@ _soft/config.ini
 translate_lm_studio.js
 test.py
 test.js
+test.tsv
+tests.tsv
 
 # Logs
 log.txt
