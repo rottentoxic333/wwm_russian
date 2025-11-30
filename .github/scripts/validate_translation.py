@@ -47,6 +47,16 @@ def validate_tsv(filepath):
     except FileNotFoundError:
         print(f"❌ Файл не найден: {filepath}")
         sys.exit(1)
+        
+    # Убираем возможный BOM (UTF-8 BOM: \ufeff) и переводы строк
+    header = lines[0].lstrip('\ufeff').rstrip('\n\r')
+    if not header.startswith('ID\tOriginalText'):
+        errors.append(
+            f"❌ Неверный заголовок. Ожидается: 'ID\\tOriginalText', получено: '{header[:50]}'"
+        )
+    
+    # Пропускаем заголовок
+    lines = lines[1:]
     
     for line_num, line in enumerate(lines, 1):
         line = line.rstrip('\n')
