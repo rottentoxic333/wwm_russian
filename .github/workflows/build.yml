@@ -1,0 +1,102 @@
+name: Build Translation Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'translation_ru.tsv'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyzstd
+
+      - name: Download latest game release
+        run: |
+          mkdir -p ./game_files
+          LATEST_TAG=$(gh release list --exclude-drafts --exclude-pre-releases | grep "^game-" | head -1 | awk '{print $1}')
+          echo "Latest game release: $LATEST_TAG"
+          gh release download "$LATEST_TAG" \
+            --pattern "*.bin" \
+            --dir ./game_files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build translation
+        run: |
+          python .github/scripts/wwm_build.py \
+            --input ./game_files/*.bin \
+            --translation translation_ru.tsv \
+            --output ./release/ \
+            --workdir ./work/
+
+      - name: Create release archive
+        run: |
+          cd release/
+          zip -r ../translation_release.zip *
+          cd ..
+
+      - name: Create Translation Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: translation-${{ github.sha }}
+          name: 🇷🇺 Русский перевод - версия ${{ github.event.head_commit.timestamp }}
+          files: |
+            release/*
+            translation_release.zip
+          body: |
+            ## 🇷🇺 Русский перевод для Where Winds Meet
+            
+            **Дата сборки:** ${{ github.event.head_commit.timestamp }}
+            
+            ---
+            
+            ### 📝 Что в релизе:
+            - `translate_words_map_en` — основной перевод
+            - `translate_words_map_en_diff` — дифференциальный перевод
+            - `translation_release.zip` — архив со всеми файлами
+            
+            ### 🚀 Как использовать:
+            
+            **Способ 1: Через Steam**
+            ```
+            Steam\steamapps\common\Where Winds Meet\Package\HD\oversea\locale
+            ```
+            Поместить файлы с заменой
+            
+            **Способ 2: Через лаунчер**
+            ```
+            \wwm\wwm_standard\LocalData\Patch\HD\oversea\locale
+            ```
+            Поместить файлы с заменой
+            
+            ### 📂 Структура архива:
+            ```
+            translation_release/
+            ├── translate_words_map_en
+            └── translate_words_map_en_diff
+            ```
+            
+            ### ✅ Процесс сборки:
+            - Применён перевод из `translation_ru.tsv`
+            - Сборка выполнена автоматически
+            
+            ---
+            
+            **Приятной игры!**
