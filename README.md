@@ -13,15 +13,17 @@
 ## 📚 Документация
 
 - **[`docs/tags.md`](docs/tags.md)** — описание тегов и форматирования, используемых в игре (ссылки, переменные, цветовое оформление);
-- **[`_soft/README.md`](_soft/README.md)** — документация по GUI-инструменту для распаковки/запаковки ресурсов и работы с текстами игры;
 - **[`docs/localization.md`](docs/localization.md)** — правила перевода для **[`/translation_ru.tsv`](/translation_ru.tsv)**.
+- **[`docs/dictionary.md`](docs/dictionary.md)** — чтобы синхронизировать одни и те же имена.
+- **[`_soft/README.md`](_soft/README.md)** — документация по GUI-инструменту для распаковки/запаковки ресурсов и работы с текстами игры;
 
 ## 🔗 Ссылки
 
+- [Статус перевода](https://dog729.github.io/wwm_russian/www/status.html)
 - [Сравнение файлов локализации](https://dog729.github.io/wwm_russian/www/comparisons.html)
-- [Страница обсуждения перевода на сайте Zone of Games](https://forum.zoneofgames.ru/topic/80635-where-winds-meet/)
-- [Google Таблица со словарём для перевода](https://docs.google.com/spreadsheets/d/1tTemjK3A1iD7sbvxPfZ8tk6xjOGZpGzdsGWl-TAgBtc/edit?usp=sharing)
 - [Руководство Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3609472595)
+- [Boosty](https://boosty.to/dog729/posts/190ba0c6-7192-443d-82f1-87d17474182b)
+- [Telegram Group](https://t.me/+ZV4ZpuGEdeFhNDRi)
 
 
 ## Дополнительная информация
