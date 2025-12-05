@@ -1,4 +1,4 @@
-name: Validate translation_ru.tsv
+name: Validate and Extract Translation Errors
 
 on:
   push:
@@ -13,20 +13,22 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: Validate TSV file
-        run: |
-          python .github/scripts/validate_tsv.py translation_ru.tsv
-
+      
+      - name: Validate translation
+        run: python .github/scripts/validate_translation.py translation_ru.tsv
+      
+      - name: Validate TSV
+        run: python .github/scripts/validate_tsv.py translation_ru.tsv
+        
       - name: Validate tags
         run: |
           python .github/scripts/validate_tags.py translation_ru.tsv
-
