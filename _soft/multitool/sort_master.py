@@ -42,7 +42,7 @@ def find_column_index(header: List[str], name: str, default_index: int = 0) -> i
 class SortRule:
     def __init__(self, word: str, mode: str):
         self.word = word
-        self.mode = mode  # "text" — допускает Kaifeng/Kaifeng's/Kaifengs; "own" — только целое слово
+        self.mode = mode  # "text" — подстрока с окончаниями; "own" — целое слово; "exception" — исключить при совпадении
 
     def matches(self, text: str) -> bool:
         if not text:
@@ -51,14 +51,17 @@ class SortRule:
         if self.mode == "own":
             # Точное слово без суффиксов
             pattern = rf"\b{word}\b"
+        elif self.mode == "exception":
+            # Подстрока, помеченная как исключение
+            pattern = rf"\b{word}\w*"
         else:
-            # Разрешаем s / 's в конце
-            pattern = rf"\b{word}(?:'s|s)?\b"
+            # Подстрока с возможными продолжениями (склонения/окончания), регистр игнорируем
+            pattern = rf"\b{word}\w*"
         return re.search(pattern, text, flags=re.IGNORECASE) is not None
 
 
 def load_sort_rules(path: str) -> List[SortRule]:
-    """Читает sort.txt формата word:mode. mode in {'text','own'}; по умолчанию text."""
+    """Читает sort.txt формата word:mode. mode in {'text','own','exception'}; по умолчанию text."""
     rules: List[SortRule] = []
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
@@ -75,15 +78,19 @@ def load_sort_rules(path: str) -> List[SortRule]:
 
 
 # --- Основная сортировка ---
-def build_score(text: str, rules: List[SortRule]) -> int:
-    """Строит битовую маску по порядку правил: 1 если совпало, 0 если нет."""
+def build_score(text: str, rules: List[SortRule]) -> Tuple[int, bool]:
+    """Строит битовую маску; exception помечает строку к исключению."""
     score = 0
+    excluded = False
     total = len(rules)
     for idx, rule in enumerate(rules):
         if rule.matches(text):
+            if rule.mode == "exception":
+                excluded = True
+                continue
             bit_pos = total - idx - 1  # старшие биты — первые правила
             score |= 1 << bit_pos
-    return score
+    return score, excluded
 
 
 def sort_rows(
@@ -103,7 +110,9 @@ def sort_rows(
     for row in rows:
         text = row[text_idx] if len(row) > text_idx else ""
         rid = row[id_idx] if len(row) > id_idx else ""
-        score = build_score(text, rules)
+        score, excluded = build_score(text, rules)
+        if excluded:
+            continue
         if filter_only and score == 0:
             continue
         if score > 0:
@@ -129,7 +138,9 @@ def build_source_index(
     for row in rows:
         text = row[text_idx] if len(row) > text_idx else ""
         rid = row[id_idx] if len(row) > id_idx else ""
-        score = build_score(text, rules)
+        score, excluded = build_score(text, rules)
+        if excluded:
+            continue
         if score > 0:
             matched += 1
         key = (-score, text.lower(), rid)
